@@ -1,0 +1,17 @@
+{{- if .Values.configmap.enabled -}}
+{{- $fullName := include "uclalib-helm-generic.fullname" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}
+{{- if .Values.configmap.additionalLabels -}}
+  labels:
+{{ toYaml .Values.configmap.additionalLabels | indent 4 -}}
+{{- end }}
+{{- if .Values.configmap.annotations }}
+  annotations:
+{{ toYaml .Values.configmap.annotations | indent 4 }}
+{{- end }}
+data:
+{{ toYaml .Values.configmap.data | indent 2 }}
+{{- end }}
