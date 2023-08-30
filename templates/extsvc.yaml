@@ -1,0 +1,12 @@
+{{- if .Values.externalservice.enabled -}}
+{{ range .Values.externalservice.extsvc }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .name }}
+spec:
+  type: ExternalName
+  externalName: {{ .domain }}
+{{- end }}
+{{- end }}

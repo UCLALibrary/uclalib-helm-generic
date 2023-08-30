@@ -34,15 +34,15 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if or .Values.configmap.enabled || .Values.externalsecrets.enabled }}
+          {{- if or .Values.configmap.enabled .Values.externalsecrets.enabled }}
           envFrom:
             {{- if .Values.configmap.enabled }}
             - configMapRef:
-              name: {{ include "uclalib-helm-generic.fullname" . }}
+                name: {{ include "uclalib-helm-generic.fullname" . }}
             {{- end }}
             {{- if .Values.externalsecrets.enabled }}
             - secretRef:
-              name: {{ include "uclalib-helm-generic.fullname" . }}
+                name: {{ include "uclalib-helm-generic.fullname" . }}
             {{- end }}
           {{- end }}
           ports:
