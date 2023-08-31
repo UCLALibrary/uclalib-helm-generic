@@ -29,12 +29,12 @@ ports:
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /status
     port: http
 
 readinessProbe:
   httpGet:
-    path: /
+    path: /status
     port: http
 
 replicaCount: 1
@@ -95,6 +95,18 @@ service:
 #---------------------------------------------
 
 #---------------------------------------------
+# External Service Configuration
+#
+#
+externalservice:
+  enabled: false
+  extsvc: []
+#---------------------------------------------
+
+#---------------------------------------------
+#
+
+#---------------------------------------------
 # Ingress Configuration
 #
 #
@@ -138,12 +150,7 @@ externalsecrets:
   enabled: false
   # Reference to ClusterSecretStore name
   ref: clustersecretstorename
-  data:
-    # Key: thesecretkey -- This can be inherited as an environment variable
-    # Value: value of /path/to/your/parameterstore/key
-    - secretKey: thesecretkey
-      remoteRef:
-        key: /path/to/your/parameterstore/key
+  data: {}
 #---------------------------------------------
 
 #---------------------------------------------
