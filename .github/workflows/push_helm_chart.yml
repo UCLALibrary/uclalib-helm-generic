@@ -3,6 +3,8 @@
 name: Push Helm Chart to ChartMuseum
 on: 
   push:
+    paths:
+      - 'charts/**'
     branches:
       - main
 
