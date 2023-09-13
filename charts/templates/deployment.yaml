@@ -16,6 +16,12 @@ spec:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
+        {{- if .Values.configmap.enabled }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if .Values.externalsecrets.enabled }}
+        checksum/config: {{ include (print $.Template.BasePath "/application-externalsecrets.yaml") . | sha256sum }}
+        {{- end }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
