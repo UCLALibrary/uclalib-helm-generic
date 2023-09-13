@@ -15,7 +15,6 @@ spec:
       {{- include "uclalib-helm-generic.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
         {{- if .Values.configmap.enabled }}
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
@@ -23,8 +22,9 @@ spec:
         {{- if .Values.externalsecrets.enabled }}
         checksum/externalsecret: {{ include (print $.Template.BasePath "/application-externalsecrets.yaml") . | sha256sum }}
         {{- end }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
         {{- include "uclalib-helm-generic.selectorLabels" . | nindent 8 }}
     spec:
