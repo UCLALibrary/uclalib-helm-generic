@@ -1,0 +1,26 @@
+{{- if .Values.pv.nfs.enabled -}}
+{{- $fullName := include "uclalib-helm-generic.fullname" . -}}
+{{ range $k, $v := .Values.pv.nfs.mounts }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $fullName }}-{{ $k }}
+  {{- with $v.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  persistentVolumeReclaimPolicy: {{ $v.persistentVolumeReclaimPolicy }}
+  volumeMode: Filesystem
+  capacity:
+    storage: {{ $v.capacity | quote }}
+  accessModes:
+    - {{ $v.mode }}
+  nfs:
+    server: {{ $v.server | quote }}
+    path: {{ $v.path | quote }}
+  mountOptions:
+    - nfsvers={{ $v.nfsvers }}
+{{- end }}
+{{- end }}
