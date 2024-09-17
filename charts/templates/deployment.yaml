@@ -1,4 +1,5 @@
 {{- if .Values.deployment.enabled -}}
+{{- $fullName := include "uclalib-helm-generic.fullname" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,6 +29,20 @@ spec:
       labels:
         {{- include "uclalib-helm-generic.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.pv.nfs.enabled }}
+      volumes:
+      {{- range $k, $v := .Values.pv.nfs.mounts }}
+      - name: {{ $fullName }}-{{ $k }}
+        persistentVolumeClaim:
+          claimName: {{ $fullName }}-{{ $k }}
+          readOnly: {{ $v.readOnly }}
+      {{- end}}
+      {{- range $k, $v := .Values.pv.default.mounts }}
+      - name: {{ $fullName }}-{{ $k }}
+        persistentVolumeClaim:
+          claimName: {{ $fullName }}-{{ $k }}
+      {{- end}}
+      {{- end}}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -37,6 +52,17 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ include "uclalib-helm-generic.fullname" . }}
+          {{- if .Values.pv.enabled }}
+          volumeMounts:
+          {{- range $k, $v := .Values.pv.nfs.mounts }}
+          - name: {{ $fullName }}-{{ $k }}
+            mountPath: {{ $v.mountPath }}
+          {{- end }}
+          {{- range $k, $v := .Values.pv.default.mounts }}
+          - name: {{ $fullName }}-{{ $k }}
+            mountPath: {{ $v.mountPath }}
+          {{- end }}
+          {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

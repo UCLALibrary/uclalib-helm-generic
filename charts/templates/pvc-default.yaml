@@ -1,0 +1,21 @@
+{{- if .Values.pv.default.enabled -}}
+{{- $fullName := include "uclalib-helm-generic.fullname" . -}}
+{{ range $k, $v := .Values.pv.default.mounts }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullName }}-{{ $k }}
+  {{- with $v.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - {{ $v.mode }}
+  resources:
+    requests:
+      storage: {{ $v.capacity }}
+  storageClassName: vsphere-csi-sc
+{{- end }}
+{{- end }}
