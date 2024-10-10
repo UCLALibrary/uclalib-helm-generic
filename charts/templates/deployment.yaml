@@ -7,6 +7,8 @@ metadata:
   labels:
     {{- include "uclalib-helm-generic.labels" . | nindent 4 }}
 spec:
+  strategy:
+    type: {{ (.Values.deployment.strategy).type | default "RollingUpdate" | quote }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
