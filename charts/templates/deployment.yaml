@@ -23,7 +23,9 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         {{- end }}
         {{- if .Values.externalsecrets.enabled }}
+        {{- if .Values.externalsecrets.secrets.application -}}
         checksum/externalsecret: {{ include (print $.Template.BasePath "/application-externalsecrets.yaml") . | sha256sum }}
+        {{- end }}
         {{- end }}
         {{- with .Values.podAnnotations }}
           {{- toYaml . | nindent 8 }}
@@ -76,8 +78,10 @@ spec:
                 name: {{ include "uclalib-helm-generic.fullname" . }}
             {{- end }}
             {{- if .Values.externalsecrets.enabled }}
+            {{- if .Values.externalsecrets.secrets.application -}}
             - secretRef:
                 name: {{ include "uclalib-helm-generic.fullname" . }}
+            {{- end }}
             {{- end }}
           {{- end }}
           ports:
