@@ -18,18 +18,10 @@ spec:
       {{- include "uclalib-helm-generic.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
       annotations:
-        {{- if .Values.configmap.enabled }}
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- end }}
-        {{- if .Values.externalsecrets.enabled }}
-        {{- if .Values.externalsecrets.secrets.application -}}
-        checksum/externalsecret: {{ include (print $.Template.BasePath "/application-externalsecrets.yaml") . | sha256sum }}
-        {{- end }}
-        {{- end }}
-        {{- with .Values.podAnnotations }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- include "uclalib-helm-generic.selectorLabels" . | nindent 8 }}
     spec:
@@ -73,16 +65,16 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if or .Values.configmap.enabled .Values.externalsecrets.enabled }}
           envFrom:
-            {{- if .Values.configmap.enabled }}
-            - configMapRef:
-                name: {{ include "uclalib-helm-generic.fullname" . }}
-            {{- end }}
-            {{- if .Values.externalsecrets.enabled }}
-            {{- if .Values.externalsecrets.secrets.application -}}
-            - secretRef:
-                name: {{ include "uclalib-helm-generic.fullname" . }}
-            {{- end }}
-            {{- end }}
+          {{- if .Values.configmap.enabled }}
+          - configMapRef:
+            name: {{ include "uclalib-helm-generic.fullname" . }}
+          {{- end }}
+          {{ if .Values.externalsecrets.enabled }}
+          {{- if .Values.externalsecrets.secrets.application -}}
+          - secretRef:
+            name: {{ include "uclalib-helm-generic.fullname" . }}
+          {{- end }}
+          {{- end }}
           {{- end }}
           ports:
             {{- toYaml .Values.ports | nindent 12 }}
