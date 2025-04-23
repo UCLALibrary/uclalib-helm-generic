@@ -67,12 +67,12 @@ spec:
           envFrom:
           {{- if .Values.configmap.enabled }}
           - configMapRef:
-            name: {{ include "uclalib-helm-generic.fullname" . }}
+              name: {{ include "uclalib-helm-generic.fullname" . }}
           {{- end }}
           {{ if .Values.externalsecrets.enabled }}
           {{- if .Values.externalsecrets.secrets.application -}}
           - secretRef:
-            name: {{ include "uclalib-helm-generic.fullname" . }}
+              name: {{ include "uclalib-helm-generic.fullname" . }}
           {{- end }}
           {{- end }}
           {{- end }}
